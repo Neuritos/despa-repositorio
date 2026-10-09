@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação do Sistema Despa</title>
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #12141c;
+            --card-hover: #181b26;
+            --primary-blue: #3b82f6;
+            --primary-blue-glow: rgba(59, 130, 246, 0.25);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(59, 130, 246, 0.4);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.5;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px 20px 20px;
+            max-width: 800px;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+
+        /* Estilo da Barra de Pesquisa */
+        .search-container {
+            width: 90%;
+            max-width: 600px;
+            margin: 10px auto 20px auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            box-shadow: var(--shadow);
+            transition: all 0.25s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            background: var(--card-hover);
+            box-shadow: 0 0 15px var(--primary-blue-glow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 90%;
+            margin: 20px 0 60px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        /* Cards Principais da Home */
+        .card-topic {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 35px 20px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.25s ease;
+        }
+
+        .card-topic:hover {
+            transform: translateY(-4px);
+            background: var(--card-hover);
+            border-color: var(--border-hover);
+            box-shadow: 0 8px 30px var(--primary-blue-glow);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.2));
+        }
+
+        .card-topic h3 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* Mensagem de nenhum resultado encontrado */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            padding: 40px;
+            display: none;
+        }
+
+        /* Modal Split Screen Perfeitamente Ajustado */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 6, 8, 0.85);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-hover);
+            border-radius: 18px;
+            width: 94vw;
+            height: 88vh;
+            max-width: 1300px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 25px var(--primary-blue-glow);
+            position: relative;
+            animation: modalFade 0.2s ease;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 25px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.25);
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            color: #ffffff;
+            margin: 0;
+            font-size: 1.35rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            color: #ffffff;
+            border-color: var(--primary-blue);
+        }
+
+        /* Corpo Dividido */
+        .modal-body-split {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        @media (max-width: 900px) {
+            .modal-body-split {
+                grid-template-columns: 1fr;
+                overflow-y: auto;
+            }
+        }
+
+        /* Coluna da Esquerda */
+        .sidebar-topics {
+            background: rgba(0, 0, 0, 0.15);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-item {
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .sidebar-item.active {
+            background: rgba(59, 130, 246, 0.12);
+            border-color: var(--primary-blue);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Coluna da Direita */
+        .content-display-area {
+            padding: 25px 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: rgba(18, 20, 28, 0.4);
+            max-height: 100%;
+        }
+
+        /* Container de Vídeo Proporcional */
+        .video-wrapper {
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .explanation-box {
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .explanation-box h3 {
+            color: var(--primary-blue);
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .explanation-box p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .placeholder-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 24px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .card-icon img {
+            width: 50%;
+            height: 50%;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.2));
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Documentação do Sistema Despa</h1>
+        <p>Selecione um módulo abaixo para consultar as funções, vídeos e explicações</p>
+    </header>
+
+    <!-- Barra de Pesquisa Adicionada -->
+    <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar módulos ou tópicos...">
+    </div>
+
+    <div class="container" id="topics-container">
+        <!-- Cards principais injetados via JS -->
+        <div id="noResults" class="no-results">Nenhum módulo encontrado para a sua busca.</div>
+    </div>
+
+    <!-- Janela Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header-bar">
+                <h2 class="modal-title" id="modal-title">Título do Módulo</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            
+            <div class="modal-body-split">
+                <!-- Esquerda: Lista de Gavetas -->
+                <div class="sidebar-topics" id="sidebar-topics"></div>
+
+                <!-- Direita: Vídeo proporcional em cima, Explicação embaixo -->
+                <div class="content-display-area" id="content-display-area">
+                    <div class="placeholder-text">Selecione uma opção ao lado para visualizar o vídeo e a explicação.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 - Sistema Despa - Documentação Interna
+    </footer>
+
+    <!-- Importação do arquivo de dados externo -->
+    <script src="data.js"></script>
+
+    <script>
+        const container = document.getElementById('topics-container');
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const sidebarTopics = document.getElementById('sidebar-topics');
+        const contentDisplayArea = document.getElementById('content-display-area');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+
+        // Renderiza os cards iniciais
+        // Renderiza os cards iniciais
+        function renderCards() {
+            document.querySelectorAll('.card-topic').forEach(card => card.remove());
+
+            for (const [key, topic] of Object.entries(systemData)) {
+                const card = document.createElement('div');
+                card.className = 'card-topic';
+                card.setAttribute('data-title', topic.title.toLowerCase());
+
+                // Verifica se o ícone é uma imagem ou um emoji
+                let iconContent = "";
+                if (topic.icon.includes('/') || topic.icon.includes('.')) {
+                    iconContent = `<img src="${topic.icon}" alt="${topic.title}">`;
+                } else {
+                    iconContent = topic.icon;
+                }
+
+                card.innerHTML = `
+                    <div class="card-icon">${iconContent}</div>
+                    <h3>${topic.title}</h3>
+                `;
+                card.onclick = () => openModal(key);
+                container.insertBefore(card, noResults);
+            }
+        }
+        renderCards();
+
+        // Lógica de Filtro da Pesquisa
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.card-topic');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title');
+                if (title.includes(term)) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        });
+
+        function openModal(topicKey) {
+            const topic = systemData[topicKey];
+            modalTitle.textContent = topic.title;
+            sidebarTopics.innerHTML = '';
+            contentDisplayArea.innerHTML = `<div class="placeholder-text">Selecione uma opção ao lado para visualizar o vídeo e a explicação.</div>`;
+
+            topic.functions.forEach((func, index) => {
+                const item = document.createElement('div');
+                item.className = 'sidebar-item';
+                item.textContent = func.name;
+
+                item.onclick = () => {
+                    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+                    item.classList.add('active');
+
+                    contentDisplayArea.innerHTML = `
+                        <div class="video-wrapper">
+                            <iframe src="${func.videoUrl}" allow="autoplay" allowfullscreen></iframe>
+                        </div>
+                        <div class="explanation-box">
+                            <h3>${func.name}</h3>
+                            <p>${func.summary}</p>
+                        </div>
+                    `;
+                };
+
+                sidebarTopics.appendChild(item);
+
+                if (index === 0) {
+                    item.click();
+                }
+            });
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
